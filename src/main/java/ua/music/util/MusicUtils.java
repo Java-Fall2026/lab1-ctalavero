@@ -1,19 +1,17 @@
 package ua.music.util;
 
+import ua.music.model.Subscription;
 import ua.music.model.Track;
 
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.Locale;
 
 public final class MusicUtils {
     static final int MIN_DEBUT_YEAR = 1900;
     static final int MAX_DURATION_SECONDS = 3600;
     static final int MAX_TRACK_NUMBER = 500;
-    static final List<String> SUBSCRIPTIONS = List.of("FREE", "PREMIUM", "FAMILY");
-    static final List<String> GENRES = List.of("ROCK", "POP", "JAZZ", "CLASSICAL", "ELECTRONIC", "HIPHOP");
 
     private MusicUtils() {
     }
@@ -34,12 +32,18 @@ public final class MusicUtils {
         return FormatHelper.normalizeLowercase(ValidationHelper.requireNotBlank(email, "Account email"));
     }
 
-    public static String normalizeSubscription(String subscription) {
-        return ValidationHelper.requireChoice(subscription, SUBSCRIPTIONS, "Subscription");
+    public static boolean supportsOfflineListening(Subscription subscription) {
+        return switch (subscription) {
+            case FREE -> false;
+            case PREMIUM, FAMILY -> true;
+        };
     }
 
-    public static String normalizeGenre(String genre) {
-        return ValidationHelper.requireChoice(genre, GENRES, "Genre");
+    public static int profileLimit(Subscription subscription) {
+        return switch (subscription) {
+            case FREE, PREMIUM -> 1;
+            case FAMILY -> 6;
+        };
     }
 
     public static LocalDate validateReleaseDate(LocalDate releaseDate, int debutYear) {
@@ -70,11 +74,11 @@ public final class MusicUtils {
     }
 
     public static String formatDuration(Track track) {
-        int seconds = track.getDurationSeconds();
+        int seconds = track.durationSeconds();
         return String.format(Locale.ROOT, "%d:%02d", seconds / 60, seconds % 60);
     }
 
     public static long trackAgeYears(Track track) {
-        return ChronoUnit.YEARS.between(track.getAlbum().getReleaseDate(), LocalDate.now());
+        return ChronoUnit.YEARS.between(track.album().releaseDate(), LocalDate.now());
     }
 }
