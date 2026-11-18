@@ -1,7 +1,5 @@
 package ua.music.util;
 
-import java.util.List;
-
 final class ValidationHelper {
     private ValidationHelper() {
     }
@@ -33,13 +31,5 @@ final class ValidationHelper {
                     fieldName + " must be between " + min + " and " + max + ", got: " + value);
         }
         return value;
-    }
-
-    static String requireChoice(String value, List<String> choices, String fieldName) {
-        String normalized = value == null ? "" : FormatHelper.normalize(value);
-        if (!choices.contains(normalized)) {
-            throw new IllegalArgumentException(fieldName + " must be one of " + choices + ", got: " + value);
-        }
-        return normalized;
     }
 }

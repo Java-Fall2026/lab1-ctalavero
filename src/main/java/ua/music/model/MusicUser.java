@@ -1,21 +1,19 @@
 package ua.music.model;
 
-import ua.common.BaseEntity;
 import ua.music.util.MusicUtils;
 
-public class MusicUser extends BaseEntity {
+public class MusicUser {
     private final String accountEmail;
     private final String username;
-    private String subscription;
+    private Subscription subscription;
 
-    private MusicUser(String accountEmail, String username, String subscription) {
-        super();
+    private MusicUser(String accountEmail, String username, Subscription subscription) {
         this.accountEmail = MusicUtils.normalizeEmail(accountEmail);
         this.username = MusicUtils.requireNotBlank(username, "Username");
         setSubscription(subscription);
     }
 
-    public static MusicUser of(String accountEmail, String username, String subscription) {
+    public static MusicUser of(String accountEmail, String username, Subscription subscription) {
         return new MusicUser(accountEmail, username, subscription);
     }
 
@@ -27,12 +25,12 @@ public class MusicUser extends BaseEntity {
         return username;
     }
 
-    public String getSubscription() {
+    public Subscription getSubscription() {
         return subscription;
     }
 
-    public final void setSubscription(String subscription) {
-        this.subscription = MusicUtils.normalizeSubscription(subscription);
+    public final void setSubscription(Subscription subscription) {
+        this.subscription = MusicUtils.requireNotNull(subscription, "Subscription");
     }
 
     @Override
@@ -58,7 +56,6 @@ public class MusicUser extends BaseEntity {
                 + "accountEmail=" + accountEmail
                 + ", username=" + username
                 + ", subscription=" + subscription
-                + ", createdAt=" + createdAt
                 + '}';
     }
 }
