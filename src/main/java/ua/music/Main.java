@@ -1,59 +1,38 @@
 package ua.music;
 
-import ua.music.model.Album;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ua.music.io.CatalogLoader;
 import ua.music.model.Artist;
-import ua.music.model.Genre;
 import ua.music.model.MusicUser;
-import ua.music.model.PlaylistTrack;
 import ua.music.model.Subscription;
-import ua.music.model.Track;
-import ua.music.util.MusicUtils;
 
-import java.time.LocalDate;
+import java.nio.file.Path;
+import java.util.List;
 
 public class Main {
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
+
     public static void main(String[] args) {
-        Artist artist = new Artist("ART-01", "The Midnight", "США", 2012);
-        LocalDate releaseDate = LocalDate.of(2016, 8, 5);
-        Album album = new Album("ALB-01", "Endless Summer", artist, Genre.ELECTRONIC, releaseDate);
-        Track track = new Track("TRK-01", album, "Sunset", 225, 1);
-        System.out.println("Трек «" + track.title() + "» з альбому «" + track.album().title() + "»");
+        CatalogLoader loader = new CatalogLoader();
+        List<Artist> artists = loader.loadArtists(Path.of("data/artists.csv"));
+        List<MusicUser> users = loader.loadUsers(Path.of("data/users.csv"));
+        System.out.println("Завантажено виконавців: " + artists.size());
+        artists.forEach(System.out::println);
+        System.out.println("Завантажено користувачів: " + users.size());
+        users.forEach(System.out::println);
 
-        System.out.println("Жанри каталогу:");
-        for (Genre genre : Genre.values()) {
-            System.out.println(genre.name() + " — " + genre.getDisplayName());
-        }
-        showInvalid(() -> Genre.valueOf("BLUES"));
+        List<Artist> missing = loader.loadArtists(Path.of("data/missing-artists.csv"));
+        System.out.println("Після спроби читання відсутнього файла програма працює, записів: " + missing.size());
 
-        MusicUser user = MusicUser.of("ivan@mail.com", "Ivan", Subscription.FREE);
-        System.out.println("Початкова підписка: " + user.getSubscription());
-        user.setSubscription(Subscription.FAMILY);
-        System.out.println("Оновлена підписка: " + user.getSubscription());
-        for (Subscription subscription : Subscription.values()) {
-            String offline = MusicUtils.supportsOfflineListening(subscription) ? "доступне" : "недоступне";
-            System.out.println(subscription + " — офлайн-прослуховування: " + offline
-                    + ", ліміт профілів: " + MusicUtils.profileLimit(subscription));
-        }
-
-        showInvalid(() -> new Track("TRK-02", album, "Demo", 0, 1));
-
-        Track duplicate = new Track("TRK-01", album, "Sunset", 225, 1);
-        System.out.println("Рівні записи: " + track.equals(duplicate));
-        System.out.println("Однакові hashCode: " + (track.hashCode() == duplicate.hashCode()));
-        System.out.println("Тривалість треку: " + MusicUtils.formatDuration(track));
-        System.out.println("Повних років від релізу: " + MusicUtils.trackAgeYears(track));
-
-        PlaylistTrack entry = new PlaylistTrack(user, track, releaseDate.plusDays(1));
-        System.out.println("Запис плейлиста: " + entry);
-    }
-
-    private static void showInvalid(Runnable action) {
+        MusicUser user = MusicUser.of("demo@mail.com", "Demo", Subscription.PREMIUM);
         try {
-            action.run();
+            user.setSubscription(null);
         } catch (IllegalArgumentException e) {
-            System.out.println("Відхилено: " + e.getMessage());
-            return;
+            log.warn("Rejected subscription change: {}", e.getMessage(), e);
+            System.out.println("Некоректну зміну підписки відхилено: " + e.getMessage());
         }
-        throw new AssertionError("Expected IllegalArgumentException");
+        System.out.println("Підписка після помилки: " + user.getSubscription());
+        log.info("Catalog demonstration completed");
     }
 }
