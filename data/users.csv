@@ -1,0 +1,7 @@
+accountEmail,username,subscription
+Ivan@MAIL.com,Ivan,FREE
+olena@mail.com,Olena, premium
+andrii@mail.com,Andrii,VIP
+,Missing email,FAMILY
+missing@mail.com,Missing subscription
+valid@mail.com,Valid,FAMILY

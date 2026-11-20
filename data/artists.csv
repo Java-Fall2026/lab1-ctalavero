@@ -1,0 +1,8 @@
+artistCode,stageName,country,debutYear
+ART-01,The Midnight,USA,2012
+ART-02,Daft Punk,France,1993
+ART-03,Invalid Number,USA,not-a-year
+ART-04,Invalid Range,USA,1899
+ART-05,Missing Country
+ART-06, ,USA,2000
+ART-07,Океан Ельзи,Ukraine,1994
