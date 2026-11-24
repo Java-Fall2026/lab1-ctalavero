@@ -36,3 +36,11 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+tasks.register('benchmark', JavaExec) {
+    group = 'application'
+    description = 'Compare repository and linear search over 100000 artists'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'ua.music.repository.SearchBenchmark'
+    systemProperty 'logback.configurationFile', file('src/main/resources/logback-benchmark.xml').absolutePath
+}

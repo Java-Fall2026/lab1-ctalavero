@@ -1,5 +1,6 @@
 package ua.music.util;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ua.music.model.Album;
 import ua.music.model.Artist;
@@ -19,6 +20,7 @@ class MusicUtilsTest {
     }
 
     @Test
+    @DisplayName("Formats track durations including the minimum and maximum")
     void formatsDurationIncludingBoundaries() {
         LocalDate today = LocalDate.now();
         assertAll(
@@ -28,6 +30,7 @@ class MusicUtilsTest {
     }
 
     @Test
+    @DisplayName("Counts only completed years since the album release")
     void countsCompletedYearsSinceRelease() {
         LocalDate today = LocalDate.now();
         assertAll(
@@ -37,6 +40,7 @@ class MusicUtilsTest {
     }
 
     @Test
+    @DisplayName("Applies offline listening and profile limits for each subscription")
     void appliesSubscriptionRules() {
         assertAll(
                 () -> assertFalse(MusicUtils.supportsOfflineListening(Subscription.FREE)),

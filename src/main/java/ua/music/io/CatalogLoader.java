@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,10 +76,12 @@ public final class CatalogLoader {
                     items.add(parser.parse(line, lineNumber));
                 } catch (InvalidDataException e) {
                     rejected++;
-                    log.warn("Skipping invalid row in {}: {}", path, e.getMessage(), e);
+                    log.warn("Skipping invalid row in {}: {}", path, e.getMessage());
                 }
             }
-        } catch (IOException | SecurityException | InvalidDataException e) {
+        } catch (NoSuchFileException e) {
+            log.warn("Catalog file not found: {}", path);
+        } catch (IOException | InvalidDataException e) {
             log.error("Cannot read catalog file {}", path, e);
         } finally {
             // Report partial results even if opening or reading the file fails.
