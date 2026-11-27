@@ -1,5 +1,6 @@
 package ua.music.io;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import ua.music.model.Artist;
@@ -20,12 +21,14 @@ class CatalogLoaderTest {
     Path directory;
 
     @Test
+    @DisplayName("Parses a valid artist row")
     void parsesValidArtist() throws InvalidDataException {
         Artist artist = loader.parseArtist("ART-01,The Midnight,USA,2012", 2);
         assertEquals(new Artist("ART-01", "The Midnight", "USA", 2012), artist);
     }
 
     @Test
+    @DisplayName("Parses a user and normalizes email and subscription")
     void parsesAndNormalizesUser() throws InvalidDataException {
         MusicUser user = loader.parseUser("  Ivan@MAIL.com , Ivan , premium ", 3);
         assertAll(
@@ -35,6 +38,7 @@ class CatalogLoaderTest {
     }
 
     @Test
+    @DisplayName("Preserves the line number and cause for an invalid year format")
     void wrapsInvalidNumberWithLineAndCause() {
         InvalidDataException error = assertThrows(InvalidDataException.class,
                 () -> loader.parseArtist("A,Artist,USA,not-a-year", 7));
@@ -43,6 +47,7 @@ class CatalogLoaderTest {
     }
 
     @Test
+    @DisplayName("Preserves the line number and cause for invalid artist data")
     void wrapsConstructorValidationWithLineAndCause() {
         InvalidDataException error = assertThrows(InvalidDataException.class,
                 () -> loader.parseArtist("A,Artist,USA,1899", 8));
@@ -52,6 +57,7 @@ class CatalogLoaderTest {
     }
 
     @Test
+    @DisplayName("Rejects a row with an incorrect number of columns")
     void rejectsWrongColumnCount() {
         InvalidDataException error = assertThrows(InvalidDataException.class,
                 () -> loader.parseArtist("A,Artist,USA", 4));
@@ -60,6 +66,7 @@ class CatalogLoaderTest {
     }
 
     @Test
+    @DisplayName("Rejects an unknown subscription")
     void rejectsInvalidSubscription() {
         InvalidDataException error = assertThrows(InvalidDataException.class,
                 () -> loader.parseUser("a@mail.com,User,VIP", 5));
@@ -68,6 +75,7 @@ class CatalogLoaderTest {
     }
 
     @Test
+    @DisplayName("Validates an empty trailing field without losing the column")
     void preservesEmptyTrailingColumnForValidation() {
         InvalidDataException error = assertThrows(InvalidDataException.class,
                 () -> loader.parseUser("a@mail.com,User,", 6));
@@ -76,6 +84,7 @@ class CatalogLoaderTest {
     }
 
     @Test
+    @DisplayName("Continues after invalid artist rows and preserves UTF-8 text")
     void continuesAfterDifferentInvalidRowsAndReadsUtf8() throws Exception {
         Path csv = directory.resolve("artists.csv");
         Files.writeString(csv, """
@@ -93,6 +102,7 @@ class CatalogLoaderTest {
     }
 
     @Test
+    @DisplayName("Loads valid users before and after an invalid row")
     void continuesLoadingUsersAfterInvalidRow() throws Exception {
         Path csv = directory.resolve("users.csv");
         Files.writeString(csv, """
@@ -107,11 +117,13 @@ class CatalogLoaderTest {
     }
 
     @Test
+    @DisplayName("Returns an empty list when the file is missing")
     void missingFileReturnsEmptyList() {
         assertTrue(loader.loadArtists(directory.resolve("missing.csv")).isEmpty());
     }
 
     @Test
+    @DisplayName("Returns an empty list when the CSV header is invalid")
     void invalidHeaderReturnsEmptyList() throws Exception {
         Path csv = directory.resolve("wrong-header.csv");
         Files.writeString(csv, "wrong,header\nA,Artist,USA,2000\n");
@@ -119,12 +131,14 @@ class CatalogLoaderTest {
     }
 
     @Test
+    @DisplayName("Returns an empty list when the file is empty")
     void emptyFileReturnsEmptyList() throws Exception {
         Path csv = Files.createFile(directory.resolve("empty.csv"));
         assertTrue(loader.loadArtists(csv).isEmpty());
     }
 
     @Test
+    @DisplayName("Preserves the subscription after a rejected update")
     void invalidSetterPreservesSubscription() {
         MusicUser user = MusicUser.of("a@mail.com", "User", Subscription.PREMIUM);
         assertThrows(IllegalArgumentException.class, () -> user.setSubscription(null));
@@ -132,6 +146,7 @@ class CatalogLoaderTest {
     }
 
     @Test
+    @DisplayName("Supports a message without a cause and remains checked")
     void exceptionSupportsMessageAndOptionalCause() {
         InvalidDataException error = new InvalidDataException("Line 9: invalid row");
         assertEquals("Line 9: invalid row", error.getMessage());
