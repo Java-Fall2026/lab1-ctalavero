@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import ua.music.model.Artist;
 import ua.music.model.MusicUser;
 import ua.music.model.Subscription;
+import ua.music.util.MusicUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -32,7 +33,12 @@ public final class CatalogLoader {
     public Artist parseArtist(String line, int lineNumber) throws InvalidDataException {
         try {
             String[] fields = columns(line, 4);
-            return new Artist(fields[0], fields[1], fields[2], Integer.parseInt(fields[3]));
+            // Preserve the original CSV contract after moving record validation to Jakarta.
+            MusicUtils.requireNotBlank(fields[0], "Artist code");
+            MusicUtils.requireNotBlank(fields[1], "Stage name");
+            MusicUtils.requireNotBlank(fields[2], "Country");
+            int year = MusicUtils.validateDebutYear(Integer.parseInt(fields[3]));
+            return new Artist(fields[0], fields[1], fields[2], year);
         } catch (IllegalArgumentException e) {
             throw new InvalidDataException("Line " + lineNumber + ": " + e.getMessage(), e);
         }

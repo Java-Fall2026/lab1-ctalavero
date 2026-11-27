@@ -1,0 +1,20 @@
+[
+  {"artistCode":"ART-01","stageName":"The Midnight","country":"USA","debutYear":2012},
+  {"artistCode":"ART-02","stageName":"Daft Punk","country":"France","debutYear":1993},
+  {"artistCode":"ART-03","stageName":"Muse","country":"UK","debutYear":1994},
+  {"artistCode":"ART-04","stageName":"Aurora","country":"Norway","debutYear":2012},
+  {"artistCode":"ART-05","stageName":"David Bowie","country":"UK","debutYear":1962},
+  {"artistCode":"ART-06","stageName":"Björk","country":"Iceland","debutYear":1977},
+  {"artistCode":"ART-07","stageName":"Океан Ельзи","country":"Ukraine","debutYear":1994},
+  {"artistCode":"ART-08","stageName":"Nils Frahm","country":"Germany","debutYear":2005},
+  {"artistCode":"ART-09","stageName":"GoGo Penguin","country":"UK","debutYear":2012},
+  {"artistCode":"ART-10","stageName":"Massive Attack","country":"UK","debutYear":1988},
+  {"artistCode":"ART-11","stageName":"Portishead","country":"UK","debutYear":1991},
+  {"artistCode":"ART-12","stageName":"Air","country":"France","debutYear":1995},
+  {"artistCode":"ART-13","stageName":"","country":"USA","debutYear":2000},
+  {"artistCode":"ART-14","stageName":"Early Debut","country":"USA","debutYear":1899},
+  {"artistCode":"ART-15","stageName":"Invalid Country","country":"123","debutYear":2000},
+  {"artistCode":"ART-01","stageName":"Duplicate Midnight","country":"USA","debutYear":2012},
+  {"artistCode":"ART-16","stageName":"Future Debut","country":"USA","debutYear":2099},
+  {"artistCode":"ART-17","stageName":"Multiple Errors","country":"123","debutYear":null}
+]

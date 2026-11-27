@@ -1,64 +1,72 @@
 package ua.music;
 
-import ua.music.io.CatalogLoader;
+import jakarta.validation.Validation;
+import jakarta.validation.ValidatorFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ua.music.config.AppConfig;
+import ua.music.io.DataLoader;
+import ua.music.io.FileStorage;
+import ua.music.io.LoadResult;
 import ua.music.model.Album;
 import ua.music.model.Artist;
-import ua.music.model.Genre;
-import ua.music.model.MusicUser;
-import ua.music.model.Subscription;
-import ua.music.repository.DuplicateIdentityException;
+import ua.music.repository.AlbumRepository;
+import ua.music.repository.ArtistRepository;
 import ua.music.repository.GenericRepository;
+import ua.music.repository.IdentityExtractor;
 
+import java.io.IOException;
 import java.nio.file.Path;
-import java.time.LocalDate;
+import java.util.List;
 
 public class Main {
-    public static void main(String[] args) {
-        GenericRepository<Artist> artists = new GenericRepository<>("Artists", artist -> artist.artistCode());
-        GenericRepository<MusicUser> users = new GenericRepository<>("Users", user -> user.getAccountEmail());
-        GenericRepository<Album> albums = new GenericRepository<>("Albums", album -> album.upcCode());
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
 
-        for (Artist artist : new CatalogLoader().loadArtists(Path.of("data/artists.csv"))) {
-            try {
-                artists.add(artist);
-            } catch (DuplicateIdentityException e) {
-                System.out.println("Дублікат із CSV відхилено: " + e.getMessage());
-            }
+    public static void main(String[] args) throws IOException {
+        AppConfig config = AppConfig.load();
+        try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
+            DataLoader loader = new DataLoader(factory.getValidator());
+            ArtistRepository artists = new ArtistRepository();
+            AlbumRepository albums = new AlbumRepository();
+            FileStorage<Artist> artistStorage = new FileStorage<>(Artist.class);
+            FileStorage<Album> albumStorage = new FileStorage<>(Album.class);
+
+            showResult("Виконавці з JSON", loader.load(config.path("artists.input"), artistStorage, artists));
+            showResult("Альбоми з YAML", loader.load(config.path("albums.input"), albumStorage, albums));
+            showResult("Синтаксично пошкоджений JSON",
+                    loader.load(config.path("broken.input"), artistStorage, artists));
+            showResult("Відсутній файл",
+                    loader.load(config.path("missing.input"), artistStorage, artists));
+
+            artists.removeByIdentity("ART-01");
+            albums.removeByIdentity("ALB-01");
+            saveAndReload(config.path("artists.output"), artistStorage, artists, loader, Artist::artistCode);
+            saveAndReload(config.path("albums.output"), albumStorage, albums, loader, Album::upcCode);
         }
+        System.out.println("Демонстрацію завершено.");
+    }
 
-        MusicUser user = MusicUser.of("ivan@mail.com", "Ivan", Subscription.FREE);
-        users.add(user);
-        Artist artist = artists.findByIdentity("ART-01").orElseThrow();
-        Album album = new Album("ALB-01", "Endless Summer", artist, Genre.ELECTRONIC,
-                LocalDate.of(2016, 8, 5));
-        albums.add(album);
+    private static void showResult(String label, LoadResult result) {
+        System.out.println(label + ": прочитано " + result.read() + ", додано " + result.added()
+                + ", відкинуто " + result.rejected().size());
+        result.rejected().forEach(record -> System.out.println(
+                "Відхилено запис " + record.recordNumber() + ": " + String.join("; ", record.errors())));
+    }
 
-        System.out.println("Виконавець: " + artists.findByIdentity("ART-01"));
-        System.out.println("Користувач: " + users.findByIdentity("ivan@mail.com"));
-        System.out.println("Альбом: " + albums.findByIdentity("ALB-01"));
-        System.out.println("Відсутній виконавець: " + artists.findByIdentity("ART-MISSING"));
-        System.out.println("Відсутній користувач: " + users.findByIdentity("missing@mail.com"));
-        System.out.println("Відсутній альбом: " + albums.findByIdentity("ALB-MISSING"));
-
+    private static <T> void saveAndReload(Path file, FileStorage<T> storage, GenericRepository<T> repository,
+                                         DataLoader loader,
+                                         IdentityExtractor<T> extractor) {
+        List<T> expected = repository.findAll();
         try {
-            users.add(user);
-        } catch (DuplicateIdentityException e) {
-            System.out.println("Повторний add відхилено: " + e.getMessage());
+            storage.save(file, expected);
+            GenericRepository<T> restored = new GenericRepository<>("Restored catalog", extractor);
+            LoadResult result = loader.load(file, storage, restored);
+            showResult("Повторне завантаження " + file, result);
+            System.out.println("Збережений і відновлений вміст збігаються: "
+                    + expected.equals(restored.findAll()));
+        } catch (IOException e) {
+            log.error("Cannot save file {}: {}", file, e.getMessage());
+            System.out.println("Збереження відхилено: " + e.getMessage());
         }
-        System.out.println("Повторний addIfAbsent: " + users.addIfAbsent(user));
-        System.out.println("Кількість користувачів: " + users.size());
-
-        user.setSubscription(Subscription.PREMIUM);
-        System.out.println("Після зміни підписки користувач знайдений за тією самою поштою: "
-                + users.findByIdentity("ivan@mail.com"));
-        System.out.println("Видалення альбому: " + albums.removeByIdentity("ALB-01"));
-        System.out.println("Повторне видалення альбому: " + albums.removeByIdentity("ALB-01"));
-
-        try {
-            artists.add(null);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Некоректне додавання відхилено: " + e.getMessage());
-        }
-        System.out.println("Усього виконавців із CSV: " + artists.size());
     }
 }

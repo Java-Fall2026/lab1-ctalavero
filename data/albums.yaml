@@ -1,0 +1,90 @@
+- upcCode: ALB-01
+  title: Endless Summer
+  artist: {artistCode: ART-01, stageName: The Midnight, country: USA, debutYear: 2012}
+  genre: ELECTRONIC
+  releaseDate: "2016-08-05"
+- upcCode: ALB-02
+  title: Random Access Memories
+  artist: {artistCode: ART-02, stageName: Daft Punk, country: France, debutYear: 1993}
+  genre: ELECTRONIC
+  releaseDate: "2013-05-17"
+- upcCode: ALB-03
+  title: Simulation Theory
+  artist: {artistCode: ART-03, stageName: Muse, country: UK, debutYear: 1994}
+  genre: ROCK
+  releaseDate: "2018-11-09"
+- upcCode: ALB-04
+  title: All My Demons Greeting Me as a Friend
+  artist: {artistCode: ART-04, stageName: Aurora, country: Norway, debutYear: 2012}
+  genre: POP
+  releaseDate: "2016-03-11"
+- upcCode: ALB-05
+  title: Blackstar
+  artist: {artistCode: ART-05, stageName: David Bowie, country: UK, debutYear: 1962}
+  genre: ROCK
+  releaseDate: "2016-01-08"
+- upcCode: ALB-06
+  title: Homogenic
+  artist: {artistCode: ART-06, stageName: Björk, country: Iceland, debutYear: 1977}
+  genre: ELECTRONIC
+  releaseDate: "1997-09-22"
+- upcCode: ALB-07
+  title: Gloria
+  artist: {artistCode: ART-07, stageName: Океан Ельзи, country: Ukraine, debutYear: 1994}
+  genre: ROCK
+  releaseDate: "2005-09-22"
+- upcCode: ALB-08
+  title: Spaces
+  artist: {artistCode: ART-08, stageName: Nils Frahm, country: Germany, debutYear: 2005}
+  genre: CLASSICAL
+  releaseDate: "2013-11-15"
+- upcCode: ALB-09
+  title: Man Made Object
+  artist: {artistCode: ART-09, stageName: GoGo Penguin, country: UK, debutYear: 2012}
+  genre: JAZZ
+  releaseDate: "2016-02-05"
+- upcCode: ALB-10
+  title: Mezzanine
+  artist: {artistCode: ART-10, stageName: Massive Attack, country: UK, debutYear: 1988}
+  genre: ELECTRONIC
+  releaseDate: "1998-04-20"
+- upcCode: ALB-11
+  title: Dummy
+  artist: {artistCode: ART-11, stageName: Portishead, country: UK, debutYear: 1991}
+  genre: ELECTRONIC
+  releaseDate: "1994-08-22"
+- upcCode: ALB-12
+  title: Moon Safari
+  artist: {artistCode: ART-12, stageName: Air, country: France, debutYear: 1995}
+  genre: ELECTRONIC
+  releaseDate: "1998-01-16"
+- upcCode: ALB-13
+  title: ""
+  artist: {artistCode: ART-01, stageName: The Midnight, country: USA, debutYear: 2012}
+  genre: POP
+  releaseDate: "2020-01-01"
+- upcCode: ALB-14
+  title: Future Release
+  artist: {artistCode: ART-01, stageName: The Midnight, country: USA, debutYear: 2012}
+  genre: POP
+  releaseDate: "2099-01-01"
+- upcCode: ALB-15
+  title: Before Debut
+  artist: {artistCode: ART-01, stageName: The Midnight, country: USA, debutYear: 2012}
+  genre: POP
+  releaseDate: "2010-01-01"
+- upcCode: ALB-01
+  title: Duplicate Summer
+  artist: {artistCode: ART-01, stageName: The Midnight, country: USA, debutYear: 2012}
+  genre: ELECTRONIC
+  releaseDate: "2016-08-05"
+- upcCode: ALB-16
+  title: Missing Artist
+  artist: null
+  genre: JAZZ
+  releaseDate: "2020-01-01"
+- upcCode: ALB-17
+  title: Unknown Genre
+  artist: {artistCode: ART-01, stageName: The Midnight, country: USA, debutYear: 2012}
+  genre: BLUES
+  releaseDate: "2020-01-01"
